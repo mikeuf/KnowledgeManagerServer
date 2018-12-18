@@ -23,12 +23,11 @@ import javax.ejb.Stateless;
 @WebService(serviceName = "DbInterface")
 @Stateless()
 public class DbInterface {
-	
-		private static final String DRIVER = "com.mysql.jdbc.Driver";
+
+	private static final String DRIVER = "com.mysql.jdbc.Driver";
 	private static final String USERNAME = "phlogiston";
 	private static final String PASSWORD = "pTbontb$2n";
 	private static final String CONN_STRING = "jdbc:mysql://localhost:3306/km?autoReconnect=true&useSSL=false";
-
 
 	/**
 	 * This is a sample web service operation
@@ -37,17 +36,17 @@ public class DbInterface {
 	public String hello(@WebParam(name = "name") String txt) {
 		return "Hello " + txt + " !";
 	}
-	
-		@WebMethod(operationName = "businessMethod")
-		public List<String> businessMethod(int articleId) {
+
+	@WebMethod(operationName = "businessMethod")
+	public List<String> businessMethod(int articleId) {
 
 		List<String> list = new ArrayList();
 
-				if (articleId < 1) {
+		if (articleId < 1) {
 			System.out.println("No article ID provided.");
 			return list;
 		}
-	
+
 		try {
 			Class.forName(DRIVER);
 			Connection con = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
@@ -57,7 +56,7 @@ public class DbInterface {
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
-			//	list.add(rs.getInt(1) + " - " + rs.getString(2) + " - " + rs.getString(3) + " - " + rs.getString(4));
+				//	list.add(rs.getInt(1) + " - " + rs.getString(2) + " - " + rs.getString(3) + " - " + rs.getString(4));
 				list.add(Integer.toString(rs.getInt(1)));
 				list.add(rs.getString(2));
 				list.add(rs.getString(3));
@@ -71,21 +70,19 @@ public class DbInterface {
 		return list;
 	}
 
-	
-		@WebMethod(operationName = "saveArticle")
-		public boolean saveArticle(List<String> list) {
+	@WebMethod(operationName = "saveArticle")
+	public boolean saveArticle(List<String> list) {
 
-	//	List<String> list = new ArrayList();
+		//	List<String> list = new ArrayList();
 
 		/*		if (articleId < 1) {
 			System.out.println("No article ID provided.");
 			return list;
 		}*/
-	
 		try {
 			Class.forName(DRIVER);
 			Connection con = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
-			
+
 			System.out.println("Hello from saveArticle");
 
 			PreparedStatement stmt = con.prepareStatement("UPDATE Article SET title = ?, problem = ?, solution = ? WHERE id = ?");
@@ -93,17 +90,10 @@ public class DbInterface {
 			stmt.setString(2, list.get(2));
 			stmt.setString(3, list.get(3));
 			stmt.setInt(4, Integer.parseInt(list.get(0)));
-						
+
 			stmt.executeUpdate();
 
-		/*	while (rs.next()) {
-			//	list.add(rs.getInt(1) + " - " + rs.getString(2) + " - " + rs.getString(3) + " - " + rs.getString(4));
-				list.add(Integer.toString(rs.getInt(1)));
-				list.add(rs.getString(2));
-				list.add(rs.getString(3));
-				list.add(rs.getString(4));
-			} */
-		con.commit();
+			con.commit();
 			con.close();
 		} catch (Exception ex) {
 			System.out.println(ex.toString());
@@ -112,6 +102,34 @@ public class DbInterface {
 		}
 		return true;
 	}
-}
-	
 
+	@WebMethod(operationName = "newArticle")
+	public int newArticle() {
+
+		ResultSet rs = null;
+		int lastArticle = 0;
+
+		try {
+			Class.forName(DRIVER);
+			Connection con = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+
+			System.out.println("Hello from saveArticle");
+
+			PreparedStatement stmt = con.prepareStatement("SELECT MAX(id) FROM Article");
+
+			rs = stmt.executeQuery();
+			rs.next();
+			lastArticle = rs.getInt(1);
+			if (lastArticle < 1) {
+				return 1;
+			}
+
+			con.close();
+		} catch (Exception ex) {
+			System.out.println(ex.toString());
+		}
+		return lastArticle;
+
+	}
+
+}
