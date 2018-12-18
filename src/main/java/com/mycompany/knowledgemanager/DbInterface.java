@@ -41,28 +41,20 @@ public class DbInterface {
 		@WebMethod(operationName = "businessMethod")
 		public List<String> businessMethod(int articleId) {
 
-
-		
 		List<String> list = new ArrayList();
 
 				if (articleId < 1) {
 			System.out.println("No article ID provided.");
 			return list;
 		}
-		
-		
+	
 		try {
 			Class.forName(DRIVER);
 			Connection con = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
 
-		//	Statement stmt = con.createStatement();
-		//	ResultSet rs = stmt.executeQuery("SELECT * FROM Article");
-			
 			PreparedStatement stmt = con.prepareStatement("SELECT * FROM `Article` WHERE `id` = (?)");
 			stmt.setInt(1, articleId);
 			ResultSet rs = stmt.executeQuery();
-
-			
 
 			while (rs.next()) {
 			//	list.add(rs.getInt(1) + " - " + rs.getString(2) + " - " + rs.getString(3) + " - " + rs.getString(4));
@@ -78,7 +70,48 @@ public class DbInterface {
 		}
 		return list;
 	}
-}
+
 	
+		@WebMethod(operationName = "saveArticle")
+		public boolean saveArticle(List<String> list) {
+
+	//	List<String> list = new ArrayList();
+
+		/*		if (articleId < 1) {
+			System.out.println("No article ID provided.");
+			return list;
+		}*/
+	
+		try {
+			Class.forName(DRIVER);
+			Connection con = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+			
+			System.out.println("Hello from saveArticle");
+
+			PreparedStatement stmt = con.prepareStatement("UPDATE Article SET title = ?, problem = ?, solution = ? WHERE id = ?");
+			stmt.setString(1, list.get(1));
+			stmt.setString(2, list.get(2));
+			stmt.setString(3, list.get(3));
+			stmt.setInt(4, Integer.parseInt(list.get(0)));
+						
+			stmt.executeUpdate();
+
+		/*	while (rs.next()) {
+			//	list.add(rs.getInt(1) + " - " + rs.getString(2) + " - " + rs.getString(3) + " - " + rs.getString(4));
+				list.add(Integer.toString(rs.getInt(1)));
+				list.add(rs.getString(2));
+				list.add(rs.getString(3));
+				list.add(rs.getString(4));
+			} */
+		con.commit();
+			con.close();
+		} catch (Exception ex) {
+			System.out.println(ex.toString());
+			list.add(ex.toString());
+			return false;
+		}
+		return true;
+	}
+}
 	
 
