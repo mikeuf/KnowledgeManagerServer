@@ -39,11 +39,11 @@ public class DbInterface {
 	}
 	
 		@WebMethod(operationName = "businessMethod")
-		public List businessMethod(int articleId) {
+		public List<String> businessMethod(int articleId) {
 
 
 		
-		List list = new ArrayList();
+		List<String> list = new ArrayList();
 
 				if (articleId < 1) {
 			System.out.println("No article ID provided.");
@@ -65,7 +65,11 @@ public class DbInterface {
 			
 
 			while (rs.next()) {
-				list.add(rs.getInt(1) + " - " + rs.getString(2) + " - " + rs.getString(3) + " - " + rs.getString(4));
+			//	list.add(rs.getInt(1) + " - " + rs.getString(2) + " - " + rs.getString(3) + " - " + rs.getString(4));
+				list.add(Integer.toString(rs.getInt(1)));
+				list.add(rs.getString(2));
+				list.add(rs.getString(3));
+				list.add(rs.getString(4));
 			}
 			con.close();
 		} catch (Exception ex) {
