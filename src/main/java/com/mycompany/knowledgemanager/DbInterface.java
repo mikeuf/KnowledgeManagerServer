@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.mycompany.knowledgemanager;
 
 import java.sql.Connection;
@@ -18,8 +13,9 @@ import javax.jws.WebParam;
 import javax.ejb.Stateless;
 
 /**
- *
- * @author cyclops
+ * DbInterface.java
+ * 
+ * This is used by the client to load and save articles to the database
  */
 @WebService(serviceName = "DbInterface")
 @Stateless()
@@ -31,15 +27,12 @@ public class DbInterface {
 	private static final String CONN_STRING = "jdbc:mysql://localhost:3306/km?autoReconnect=true&useSSL=false";
 
 	/**
-	 * This is a sample web service operation
+	 * Loads an article from the database
+	 * @param The ID of the article to be loaded
+	 * @return The article, as a list of fields
 	 */
-	@WebMethod(operationName = "hello")
-	public String hello(@WebParam(name = "name") String txt) {
-		return "Hello " + txt + " !";
-	}
-
-	@WebMethod(operationName = "businessMethod")
-	public List<String> businessMethod(int articleId) {
+	@WebMethod(operationName = "loadArticle")
+	public List<String> loadArticle(int articleId) {
 
 		List<String> list = new ArrayList();
 
@@ -66,19 +59,20 @@ public class DbInterface {
 			con.close();
 		} catch (Exception ex) {
 			System.out.println(ex.toString());
-			list.add(ex.toString());
 		}
 		return list;
 	}
 
+		/**
+	 * Saves an article to the database
+	 * @param The article as a list of fields
+	 */
 	@WebMethod(operationName = "saveArticle")
-	public boolean saveArticle(List<String> list) {
+	public void saveArticle(List<String> list) {
 
 		try {
 			Class.forName(DRIVER);
 			Connection con = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
-
-			System.out.println("Hello from saveArticle");
 
 			//	PreparedStatement stmt = con.prepareStatement("UPDATE Article SET title = ?, problem = ?, solution = ? WHERE id = ?");
 			PreparedStatement stmt = con.prepareStatement(""
@@ -99,12 +93,13 @@ public class DbInterface {
 			con.close();
 		} catch (Exception ex) {
 			System.out.println(ex.toString());
-			list.add(ex.toString());
-			return false;
 		}
-		return true;
 	}
 
+	/**
+	 * Starts a new article and clears the fields
+	 * @return The highest current article ID
+	 */
 	@WebMethod(operationName = "newArticle")
 	public int newArticle() {
 
