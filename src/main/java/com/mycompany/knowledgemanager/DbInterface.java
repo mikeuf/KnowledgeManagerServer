@@ -6,15 +6,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.collections.ObservableList;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
-import javax.jws.WebParam;
 import javax.ejb.Stateless;
 
 /**
  * DbInterface.java
- * 
+ *
  * This is used by the client to load and save articles to the database
  */
 @WebService(serviceName = "DbInterface")
@@ -28,6 +26,7 @@ public class DbInterface {
 
 	/**
 	 * Loads an article from the database
+	 *
 	 * @param The ID of the article to be loaded
 	 * @return The article, as a list of fields
 	 */
@@ -35,11 +34,6 @@ public class DbInterface {
 	public List<String> loadArticle(int articleId) {
 
 		List<String> list = new ArrayList();
-
-		if (articleId < 1) {
-			System.out.println("No article ID provided.");
-			return list;
-		}
 
 		try {
 			Class.forName(DRIVER);
@@ -49,8 +43,8 @@ public class DbInterface {
 			stmt.setInt(1, articleId);
 			ResultSet rs = stmt.executeQuery();
 
+			// populate the list with the query results and return it
 			while (rs.next()) {
-				//	list.add(rs.getInt(1) + " - " + rs.getString(2) + " - " + rs.getString(3) + " - " + rs.getString(4));
 				list.add(Integer.toString(rs.getInt(1)));
 				list.add(rs.getString(2));
 				list.add(rs.getString(3));
@@ -63,8 +57,9 @@ public class DbInterface {
 		return list;
 	}
 
-		/**
+	/**
 	 * Saves an article to the database
+	 *
 	 * @param The article as a list of fields
 	 */
 	@WebMethod(operationName = "saveArticle")
@@ -74,7 +69,8 @@ public class DbInterface {
 			Class.forName(DRIVER);
 			Connection con = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
 
-			//	PreparedStatement stmt = con.prepareStatement("UPDATE Article SET title = ?, problem = ?, solution = ? WHERE id = ?");
+			// if the id does not exist, insert a new one
+			// if the id already exists, update it instead
 			PreparedStatement stmt = con.prepareStatement(""
 							+ "INSERT INTO Article (id, title, problem, solution)"
 							+ "VALUES (?,?,?,?)"
@@ -98,6 +94,7 @@ public class DbInterface {
 
 	/**
 	 * Starts a new article and clears the fields
+	 *
 	 * @return The highest current article ID
 	 */
 	@WebMethod(operationName = "newArticle")
@@ -115,6 +112,8 @@ public class DbInterface {
 			rs = stmt.executeQuery();
 			rs.next();
 			lastArticle = rs.getInt(1);
+
+			// the highest article id should always be at least 1
 			if (lastArticle < 1) {
 				return 1;
 			}
@@ -124,7 +123,5 @@ public class DbInterface {
 			System.out.println(ex.toString());
 		}
 		return lastArticle;
-
 	}
-
 }
