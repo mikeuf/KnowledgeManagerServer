@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.collections.ObservableList;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -113,8 +114,6 @@ public class DbInterface {
 			Class.forName(DRIVER);
 			Connection con = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
 
-			System.out.println("Hello from saveArticle");
-
 			PreparedStatement stmt = con.prepareStatement("SELECT MAX(id) FROM Article");
 
 			rs = stmt.executeQuery();
@@ -131,5 +130,6 @@ public class DbInterface {
 		return lastArticle;
 
 	}
+
 
 }
