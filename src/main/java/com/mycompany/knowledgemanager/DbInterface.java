@@ -74,12 +74,6 @@ public class DbInterface {
 	@WebMethod(operationName = "saveArticle")
 	public boolean saveArticle(List<String> list) {
 
-		//	List<String> list = new ArrayList();
-
-		/*		if (articleId < 1) {
-			System.out.println("No article ID provided.");
-			return list;
-		}*/
 		try {
 			Class.forName(DRIVER);
 			Connection con = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
