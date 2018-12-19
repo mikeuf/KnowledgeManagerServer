@@ -86,11 +86,18 @@ public class DbInterface {
 
 			System.out.println("Hello from saveArticle");
 
-			PreparedStatement stmt = con.prepareStatement("UPDATE Article SET title = ?, problem = ?, solution = ? WHERE id = ?");
-			stmt.setString(1, list.get(1));
-			stmt.setString(2, list.get(2));
-			stmt.setString(3, list.get(3));
-			stmt.setInt(4, Integer.parseInt(list.get(0)));
+			//	PreparedStatement stmt = con.prepareStatement("UPDATE Article SET title = ?, problem = ?, solution = ? WHERE id = ?");
+			PreparedStatement stmt = con.prepareStatement(""
+							+ "INSERT INTO Article (id, title, problem, solution)"
+							+ "VALUES (?,?,?,?)"
+							+ "ON DUPLICATE KEY UPDATE title=?, problem=?, solution=?");
+			stmt.setInt(1, Integer.parseInt(list.get(0)));
+			stmt.setString(2, list.get(1));
+			stmt.setString(3, list.get(2));
+			stmt.setString(4, list.get(3));
+			stmt.setString(5, list.get(1));
+			stmt.setString(6, list.get(2));
+			stmt.setString(7, list.get(3));
 
 			stmt.executeUpdate();
 
@@ -130,6 +137,5 @@ public class DbInterface {
 		return lastArticle;
 
 	}
-
 
 }
