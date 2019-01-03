@@ -63,7 +63,11 @@ public class DbInterface {
 	 * @param The article as a list of fields
 	 */
 	@WebMethod(operationName = "saveArticle")
-	public void saveArticle(List<String> list) {
+	public void saveArticle(final List<String> list) {
+		new Thread( new Runnable() {
+    @Override
+    public void run() {
+
 
 		try {
 			Class.forName(DRIVER);
@@ -90,6 +94,8 @@ public class DbInterface {
 		} catch (Exception ex) {
 			System.out.println(ex.toString());
 		}
+		    }
+}).start();
 	}
 
 	/**
